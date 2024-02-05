@@ -937,6 +937,12 @@ end
 
 M.on_attach = function(cfg, bufnr)
   bufnr = bufnr or api.nvim_get_current_buf()
+  
+  if type(cfg) == 'table' then
+    _LSP_SIG_CFG = vim.tbl_extend('keep', cfg, _LSP_SIG_CFG)
+    cleanup_logs(cfg)
+    -- log(_LSP_SIG_CFG)
+  end
 
   local augroup = api.nvim_create_augroup('Signature', { clear = false })
   api.nvim_create_autocmd('InsertEnter', {
@@ -973,12 +979,6 @@ M.on_attach = function(cfg, bufnr)
   })
   helper.cursor_hold(_LSP_SIG_CFG.cursorhold_update, bufnr)
   -- stylua ignore end
-
-  if type(cfg) == 'table' then
-    _LSP_SIG_CFG = vim.tbl_extend('keep', cfg, _LSP_SIG_CFG)
-    cleanup_logs(cfg)
-    -- log(_LSP_SIG_CFG)
-  end
 
   if _LSP_SIG_CFG.bind then
     vim.lsp.handlers['textDocument/signatureHelp'] =
